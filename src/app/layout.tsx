@@ -4,7 +4,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { cn } from '@/lib/utils';
 
 export const metadata: Metadata = {
-  title: 'BMAD IDE',
+  title: 'BMAD Studio',
   description: 'A modern IDE for BMAD method development.',
 };
 

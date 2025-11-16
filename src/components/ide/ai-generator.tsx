@@ -23,6 +23,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 
 interface AiGeneratorProps {
   onCodeGenerated: (code: string) => void;
+  apiKey: string;
 }
 
 const formSchema = z.object({
@@ -31,7 +32,7 @@ const formSchema = z.object({
   }),
 });
 
-export default function AiGenerator({ onCodeGenerated }: AiGeneratorProps) {
+export default function AiGenerator({ onCodeGenerated, apiKey }: AiGeneratorProps) {
   const [isGenerating, setIsGenerating] = useState(false);
   const { toast } = useToast();
 
@@ -43,8 +44,17 @@ export default function AiGenerator({ onCodeGenerated }: AiGeneratorProps) {
   });
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
+    if (!apiKey) {
+      toast({
+        variant: "destructive",
+        title: "API Key Missing",
+        description: "Please enter your Google AI API Key in the Settings tab first.",
+      });
+      return;
+    }
+    
     setIsGenerating(true);
-    const result = await generateCodeAction(values.description);
+    const result = await generateCodeAction({ description: values.description, apiKey });
     setIsGenerating(false);
 
     if (result.error) {
@@ -96,7 +106,7 @@ export default function AiGenerator({ onCodeGenerated }: AiGeneratorProps) {
                   </FormItem>
                 )}
               />
-              <Button type="submit" disabled={isGenerating} className="w-full">
+              <Button type="submit" disabled={isGenerating || !apiKey} className="w-full">
                 {isGenerating ? (
                   <>
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
@@ -106,6 +116,11 @@ export default function AiGenerator({ onCodeGenerated }: AiGeneratorProps) {
                   "Generate Code"
                 )}
               </Button>
+              {!apiKey && (
+                <p className="text-center text-xs text-destructive">
+                  API Key required to generate code.
+                </p>
+              )}
             </form>
           </Form>
         </CardContent>
