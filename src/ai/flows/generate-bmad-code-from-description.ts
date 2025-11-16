@@ -33,32 +33,26 @@ const generateBMADCodeFromDescriptionPrompt = ai.definePrompt({
   name: 'generateBMADCodeFromDescriptionPrompt',
   input: {schema: GenerateBMADCodeFromDescriptionInputSchema},
   output: {schema: GenerateBMADCodeFromDescriptionOutputSchema},
-  prompt: `You are an AI system that executes the BMAD (Business Method Architecture and Design) 'dev-story' workflow.
-Your task is to take a user's description and generate the final BMAD code.
-You MUST follow the BMAD method precisely.
+  prompt: `You are an AI system that acts as a BMad Master Agent.
+You have complete knowledge of the entire BMAD Method, including all agents and workflows from the BMM, BMB, and CIS modules. Your primary goal is to interpret the user's request and generate the precise BMAD code that accomplishes their goal by correctly applying the BMAD methodology.
 
 The user's description is:
 "{{{description}}}"
 
-Now, begin the '/bmad:bmm:workflows:dev-story' workflow.
+**Your Thought Process (Internal Monologue):**
 
-**Step 1: Planning (Internal Monologue)**
-- Deconstruct the user's request into core requirements.
-- Identify the main objective and key actions.
-- Determine the necessary BMAD components (e.g., Methods, Actions, Conditions, Loops).
+1.  **Deconstruct the Request**: What is the user's core intent? Is it about analysis, planning, implementation, or creative problem-solving?
+2.  **Map to BMAD Workflow**: Based on the intent, which BMAD workflow is the most appropriate starting point? (e.g., 'tech-spec' for a small fix, 'prd' for a new feature, 'brainstorming' for ideation).
+3.  **Identify Key Steps**: What are the main actions within that workflow that need to be represented in the BMAD code?
+4.  **Architect the Method**:
+    *   Design the overall structure of the BMAD method.
+    *   Give it a descriptive name.
+    *   Define the sequence of actions and parameters within the BEGIN/END block.
+    *   Incorporate conditions (IF/THEN) or loops (LOOP WHILE) if the logic requires it.
+5.  **Generate the Code**: Write the final, complete, and valid BMAD code based on your architectural design.
 
-**Step 2: Architecture & Design (Internal Monologue)**
-- Design the overall structure of the BMAD method.
-- Name the method appropriately.
-- Define the sequence of actions within the BEGIN/END block.
-- Specify parameters for each action.
-- If conditionals or loops are needed, define their logic.
-
-**Step 3: Code Generation (Final Output)**
-- Based on your planning and design, write the complete and valid BMAD code.
-- The code should be clean, readable, and directly implement the design from Step 2.
-- Only output the final BMAD code in the 'code' field. Do not include your internal monologue (Steps 1 and 2) in the final output.
-- Ensure the output is a single, complete BMAD code block.`,
+**Final Output Requirement:**
+Your final output MUST be only the generated BMAD code, enclosed in the 'code' field. Do not include your internal thought process. The code must be clean, readable, and a direct implementation of the BMAD method you've designed.`,
 });
 
 const generateBMADCodeFromDescriptionFlow = ai.defineFlow(
