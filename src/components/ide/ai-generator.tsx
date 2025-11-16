@@ -5,7 +5,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 
-import { generateCodeAction } from "@/app/actions";
+import { generateBMADCodeFromDescription } from "@/ai/flows/generate-bmad-code-from-description";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
@@ -54,22 +54,40 @@ export default function AiGenerator({ onCodeGenerated, apiKey }: AiGeneratorProp
     }
     
     setIsGenerating(true);
-    const result = await generateCodeAction({ description: values.description, apiKey });
-    setIsGenerating(false);
-
-    if (result.error) {
-      toast({
-        variant: "destructive",
-        title: "Generation Failed",
-        description: result.error,
-      });
-    } else if (result.code) {
-      onCodeGenerated(result.code);
-      toast({
-        title: "Code Generated",
-        description: "The BMAD code has been loaded into the editor.",
-      });
-      form.reset();
+    try {
+      const result = await generateBMADCodeFromDescription({ description: values.description, apiKey });
+      if (result && result.code) {
+        onCodeGenerated(result.code);
+        toast({
+          title: "Code Generated",
+          description: "The BMAD code has been loaded into the editor.",
+        });
+        form.reset();
+      } else {
+        toast({
+          variant: "destructive",
+          title: "Generation Failed",
+          description: "Failed to get a valid response from the AI.",
+        });
+      }
+    } catch (error: any) {
+      console.error("AI Generation Error:", error);
+      const errorMessage = error.message || "An unexpected error occurred.";
+      if (errorMessage.includes("API key not valid")) {
+        toast({
+          variant: "destructive",
+          title: "Invalid API Key",
+          description: "The provided API key is not valid. Please check and try again.",
+        });
+      } else {
+         toast({
+          variant: "destructive",
+          title: "Generation Failed",
+          description: `An unexpected error occurred: ${errorMessage}`,
+        });
+      }
+    } finally {
+      setIsGenerating(false);
     }
   };
 

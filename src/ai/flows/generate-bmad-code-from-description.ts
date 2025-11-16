@@ -9,13 +9,16 @@
  * - GenerateBMADCodeFromDescriptionOutput - The return type for the generateBMADCodeFromDescription function.
  */
 
-import { ai } from '@/ai/genkit';
+import { configureGenkit } from 'genkit';
+import { googleAI } from '@genkit-ai/google-genai';
 import { z } from 'genkit';
+import { ai } from '@/ai/genkit';
 
 const GenerateBMADCodeFromDescriptionInputSchema = z.object({
   description: z
     .string()
     .describe('A plain text description of the desired BMAD method.'),
+  apiKey: z.string().optional().describe('The Google AI API Key.'),
 });
 
 export type GenerateBMADCodeFromDescriptionInput = z.infer<
@@ -33,7 +36,19 @@ export type GenerateBMADCodeFromDescriptionOutput = z.infer<
 export async function generateBMADCodeFromDescription(
   input: GenerateBMADCodeFromDescriptionInput
 ): Promise<GenerateBMADCodeFromDescriptionOutput> {
-  return generateBMADCodeFromDescriptionFlow(input);
+  // Configure Genkit on the fly with the provided API key
+  if (input.apiKey) {
+    configureGenkit({
+      plugins: [
+        googleAI({
+          apiKey: input.apiKey,
+        }),
+      ],
+    });
+  }
+
+  const { output } = await generateBMADCodeFromDescriptionPrompt(input);
+  return output!;
 }
 
 const generateBMADCodeFromDescriptionPrompt = ai.definePrompt({
@@ -63,15 +78,3 @@ The user's description is:
 **Final Output Requirement:**
 Your final output MUST be only the generated BMAD code, enclosed in the 'code' field. Do not include your internal thought process. The code must be clean, readable, and a direct implementation of the BMAD method you've designed.`,
 });
-
-const generateBMADCodeFromDescriptionFlow = ai.defineFlow(
-  {
-    name: 'generateBMADCodeFromDescriptionFlow',
-    inputSchema: GenerateBMADCodeFromDescriptionInputSchema,
-    outputSchema: GenerateBMADCodeFromDescriptionOutputSchema,
-  },
-  async input => {
-    const { output } = await generateBMADCodeFromDescriptionPrompt(input);
-    return output!;
-  }
-);
