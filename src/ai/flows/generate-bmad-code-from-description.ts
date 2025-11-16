@@ -1,5 +1,3 @@
-'use server';
-
 /**
  * @fileOverview BMAD Code Generator AI agent. This agent acts as a BMad Master Agent,
  * understanding the BMAD Method and generating appropriate code from a user's description.
@@ -70,9 +68,9 @@ The user's description is:
     *   *Example*: If the user says "Help me brainstorm ideas for my app," you should think, "This is a creative task. The **Brainstorming Coach (Carson)** from the **CIS module** is the right agent, and the workflow is **brainstorming**."
 3.  **Architect the Method Code**:
     *   Design the overall structure of the BMAD method.
-    *   Give it a descriptive name (e.g., \`Method: CreateTechSpecForBugFix\`).
-    *   Define the sequence of actions and parameters within the \`BEGIN\`/\`END\` block. The primary action should be invoking the correct agent and workflow.
-    *   Incorporate conditions (\`IF\`/\`THEN\`) or loops (\`LOOP WHILE\`) only if the user's description requires complex logic. For most cases, a direct agent/workflow call is sufficient.
+    *   Give it a descriptive name (e.g., 'Method: CreateTechSpecForBugFix').
+    *   Define the sequence of actions and parameters within the 'BEGIN'/'END' block. The primary action should be invoking the correct agent and workflow.
+    *   Incorporate conditions ('IF'/'THEN') or loops ('LOOP WHILE') only if the user's description requires complex logic. For most cases, a direct agent/workflow call is sufficient.
 4.  **Generate the Code**: Write the final, complete, and valid BMAD code. It must be clean, readable, and a direct implementation of the BMAD method you've designed. It should look like a script that an expert BMAD user would write.
 
 **Final Output Requirement:**
